@@ -10,7 +10,9 @@
 
 void lsh_loop(void);
 char* lsh_read_line(void);
+char** lsh_split_line(char* line);
 int lsh_launch(char** args);
+int lsh_execute(char** args);
 
 /*
     Function Declaration for builtin shell commands:
@@ -46,7 +48,7 @@ int lsh_help(char** args) {
   printf("Type program names and arguments, and hit enter.\n");
   printf("The following are built in:\n");
 
-  for (i = 0; i < lsh_num_builtins; i++) {
+  for (i = 0; i < lsh_num_builtins(); i++) {
     printf("    %s\n", builtin_str[i]);
   }
 
@@ -121,7 +123,7 @@ void lsh_loop(void) {
 
 char* lsh_read_line(void) {
   char* line = NULL;
-  ssize_t bufsize = 0;
+  size_t bufsize = 0;
 
   if (getline(&line, &bufsize, stdin) == -1) {
     if (feof(stdin)) {
@@ -173,7 +175,7 @@ int lsh_execute(char** args) {
     return 1;
   }
 
-  for (i = 0; i < lsh_num_builtins; i++) {
+  for (i = 0; i < lsh_num_builtins(); i++) {
     if (strcmp(args[0], builtin_str[i]) == 0) {
       return (*builtin_func[i])(args);
     }
